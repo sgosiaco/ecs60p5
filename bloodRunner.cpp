@@ -83,7 +83,7 @@ void checkFlows(Vessel vessels[], int fullFlows[], int emptyFlows[],
 
 int main(int argc, char *argv[])
 {
-  int vesselCount, cellCount, depth, *emptyFlows, *fullFlows, 
+  int vesselCount, cellCount, depth, *emptyFlows, *fullFlows,
     pulses = 0, totalFed = 0, theirTotalFed;
   Vessel *vessels, *vessels2;
   Cell *cells;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     if(theirTotalFed != totalFed)
       cout << "At pulse #" << pulses << " your number fed, " << theirTotalFed
         << ", does not match ours, " << totalFed << endl;
-  } while(++pulses < 10000  && totalFed < cellCount);
+  } while(++pulses < 2  && totalFed < cellCount); //10000
 
   cout << "Time: " << ct.cur_CPUTime() << " Pulses: " << pulses << endl;
 
