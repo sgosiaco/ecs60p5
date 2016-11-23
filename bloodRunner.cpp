@@ -60,8 +60,13 @@ void checkFlows(Vessel vessels[], int fullFlows[], int emptyFlows[],
       }
       if(cells[i].inFullCount != cells[i].outFullCount + 1
         || cells[i].inEmptyCount != cells[i].outEmptyCount - 1)
-        cout << "Cell #" << i  << " at pulse #" << pulses
-          << " does not properly eat a full cell.\n";
+        {
+          cout << "Cell #" << i  << " at pulse #" << pulses
+            << " does not properly eat a full cell.\n";
+          cout << cells[i].inFullCount << ' ' << cells[i].outFullCount << endl;
+          cout << cells[i].inEmptyCount << ' ' << cells[i].outEmptyCount << endl;
+        }
+
     } // if cell not full and a flow past
 
     netFlow = cells[i].inFullCount + cells[i].inEmptyCount -
@@ -110,7 +115,7 @@ int main(int argc, char *argv[])
     if(theirTotalFed != totalFed)
       cout << "At pulse #" << pulses << " your number fed, " << theirTotalFed
         << ", does not match ours, " << totalFed << endl;
-  } while(++pulses < 3  && totalFed < cellCount); //10000
+  } while(++pulses < 2  && totalFed < cellCount); //10000
 
   cout << "Time: " << ct.cur_CPUTime() << " Pulses: " << pulses << endl;
 

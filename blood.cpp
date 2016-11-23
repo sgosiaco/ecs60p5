@@ -53,7 +53,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
     cout << i << ' ' << brain[i].outgoing << ' ' << brain[i].fed << ':';
     for(int k = 0; k < brain[i].outgoing; k++)
     {
-      cout << ' ' << brain[i].out[k].dest << '(' << brain[i].out[k].ID << ')';
+      cout << ' ' << brain[i].out[k].dest << '(' << brain[i].out[k].ID << ',' << brain[i].out[k].capacity << ')';
     }
     cout << endl;
   }
@@ -81,7 +81,6 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
   }
   */
-  path(brain[0], brain[0].out[0].capacity, brain[0].out[0]);
   /*
   for(int i = 0; i < brain[0].outgoing; i++)
   {
@@ -90,9 +89,21 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     path(brain[pos], cap, brain[0].out[i]);
   }
   */
+  for(int i = 0; i < vesselCount; i++)
+    fullFlows[i] = emptyFlows[i] = 0;
+
+  int numFed = 0;
+  if(!brain[0].fed)
+    brain[0].fed = 1;
+
+  path(brain[0], brain[0].out[0].capacity, brain[0].out[0]);
+
+  cout << ">Fed ";
   for(int i = 0; i < cellCount; i++)
   {
     cout << brain[i].fed << ' ';
+    if(brain[i].fed)
+      numFed++;
   }
   cout << endl;
 
@@ -107,10 +118,63 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
   {
     for(int k = 0; k < brain[i].outgoing; k++)
     {
-      cout << i << ' ' << brain[i].out[k].ID << ' ' << brain[i].out[k].carrying << endl;
+      //scout << i << ' ' << brain[i].out[k].ID << ' ' << brain[i].out[k].carrying << endl;
+      if(brain[i].out[k].carrying > 0)
+      {
+        int ID = brain[i].out[k].ID;
+        int out = brain[i].out[k].dest;
+        int ez = 0;
+        (fullFlows[ID])++;
+        if(out != cellCount - 1)
+        {
+          //find path to end node.
+          for(int p = 0; p < brain[out].outgoing; p++)
+          {
+            if(brain[out].out[p].dest == cellCount - 1)
+            {
+              emptyFlows[brain[out].out[p].ID] += brain[i].out[k].carrying;
+              ez = 1;
+              break;
+            }
+          }
+        }
+        brain[i].out[k].carrying = 0;
+      }
     }
   }
-  return 0;  // to avoid warning for now
+
+  /*
+  file 6-12-1
+  if(brain[4].fed == 0)
+  {
+    emptyFlows[6] = 1;
+    emptyFlows[8] = 2;
+  }
+  */
+
+  //debug printing
+  cout << ">Indx: ";
+  for(int i = 0; i < vesselCount; i++)
+  {
+    cout << i << ' ';
+  }
+  cout << endl;
+
+  cout << ">Full: ";
+  for(int i = 0; i < vesselCount; i++)
+  {
+    cout << fullFlows[i] << ' ';
+  }
+  cout << endl;
+
+  cout << ">Empt: ";
+  for(int i = 0; i < vesselCount; i++)
+  {
+    cout << emptyFlows[i] << ' ';
+  }
+  cout << endl;
+
+  return numFed;  // to avoid warning for now
 } // calcFlows()f
 
 int Blood::path(BrainCell &cell, int flow, Vessel2 &prev)
@@ -125,10 +189,11 @@ int Blood::path(BrainCell &cell, int flow, Vessel2 &prev)
     if(!(brain[dest].fed))
     {
       brain[dest].fed = 1;
-      (vessel->carrying)++;
+      //(vessel->carrying)++;
       flow--;
     }
-    cout << "Vessel:" << vessel->ID << ' ' << vessel->src << ' ' << dest << ' ' << brain[dest].fed << ' ' << vessel->carrying << ' ' << flow << endl;
+    (vessel->carrying)++;
+    //cout << "Vessel:" << vessel->ID << ' ' << vessel->src << ' ' << dest << ' ' << brain[dest].fed << ' ' << vessel->carrying << ' ' << flow << endl;
     if(flow != 0)
       path(brain[dest], flow, *vessel);
   }
