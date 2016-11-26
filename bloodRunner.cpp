@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     if(theirTotalFed != totalFed)
       cout << "At pulse #" << pulses << " your number fed, " << theirTotalFed
         << ", does not match ours, " << totalFed << endl;
-  } while(++pulses < 10  && totalFed < cellCount); //10000
+  } while(++pulses < 10000  && totalFed < cellCount); //10000
 
   cout << "Time: " << ct.cur_CPUTime() << " Pulses: " << pulses << endl;
 

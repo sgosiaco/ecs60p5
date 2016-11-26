@@ -18,10 +18,15 @@ class BrainCell
 {
 public:
   BrainCell();
-  void create(Vessel2 in[], int count);
+  void create(Vessel2 in[], int count, int ID);
   int outgoing;
   int fed;
+  int ID;
   Vessel2* out;
+  Vessel2* inPath;
+  Vessel2* outPath;
+  int inLength;
+  int outLength;
 }; //class BrainCell
 
 #endif

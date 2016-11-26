@@ -1,3 +1,4 @@
+#include <iostream>
 #include "braincell.h"
 
 using namespace std;
@@ -6,12 +7,18 @@ BrainCell::BrainCell()
 {
   fed = 0;
   outgoing = 0;
+  ID = 0;
+  inPath = outPath = NULL;
+  inLength = outLength = 0;
 }
 
 
-void BrainCell::create(Vessel2 in[], int count)
+void BrainCell::create(Vessel2 in[], int count, int ID)
 {
   fed = 0;
+  inLength = outLength = 0;
+  inPath = outPath = NULL;
+  this->ID = ID;
   outgoing = count;
   out = new Vessel2[count];
   for(int i = 0; i < count; i++)

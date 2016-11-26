@@ -56,7 +56,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
   brain = new BrainCell[cellCount];
   for(int i = 0; i < cellCount; i++)
   {
-    brain[i].create(temp[i], count[i]);
+    brain[i].create(temp[i], count[i], i);
   }
 
   //printing out list
@@ -95,8 +95,6 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     fullFlows[i] = emptyFlows[i] = 0;
 
   int numFed = 0;
-  //if(!brain[0].fed)
-    //brain[0].fed = 1;
 
   //path(brain[0], brain[0].out[0].capacity, brain[0].out[0]);
 
@@ -105,56 +103,67 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
   for(int i = 1; i < cellCount - 1; i++)
   {
     cout << "Blood cell #" << i << endl;
-    Vessel2* inPath = new Vessel2[depth];
-    Vessel2* outPath = new Vessel2[depth];
-    int inLength = 0;
-    int outLength = 0;
+    //Vessel2* inPath = new Vessel2[depth];
+    //Vessel2* outPath = new Vessel2[depth];
+    //int inLength = 0;
+    //int outLength = 0;
     if(brain[i].fed == 0)
     {
-      generatePath(brain[0], inPath, inLength, i);
-      generatePath(brain[i], outPath, outLength, cellCount - 1);
-      cout << " InPath: ";
-      printPath(inPath, inLength);
-      cout << " OutPath: ";
-      printPath(outPath, outLength);
-      //cout << inLength << ' ' << outLength << endl;
-      if(checkCapacity(inPath, inLength, fullFlows, emptyFlows) && checkCapacity(outPath, outLength, fullFlows, emptyFlows))
+      if(brain[i].inPath == NULL)
       {
+        brain[i].inPath = new Vessel2[depth];
+        brain[i].outPath = new Vessel2[depth];
+        generatePath2(brain[0], brain[i].inPath, brain[i].inLength, i);
+        generatePath2(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
+      }
+      cout << " InPath: ";
+      printPath(brain[i].inPath, brain[i].inLength);
+      cout << " inLength: " << brain[i].inLength << endl;
+      cout << " OutPath: ";
+      printPath(brain[i].outPath, brain[i].outLength);
+      //cout << inLength << ' ' << outLength << endl;
+      if(checkCapacity(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows))
+      {
+
         cout << " Full Path: ";
-        for(int p = 0; p < inLength; p++)
+        for(int p = brain[i].inLength - 1; p >= 0; p--)
         {
-          cout << inPath[p].dest << ' ';
-          (fullFlows[inPath[p].ID])++;
+          cout << brain[i].inPath[p].dest << ' ';
+          (fullFlows[brain[i].inPath[p].ID])++;
         }
         cout << endl;
         cout << " Empty Path: ";
-        for(int k = 0; k < outLength; k++)
+        for(int k = brain[i].outLength - 1; k >= 0; k--)
         {
-          cout << outPath[k].dest << ' ';
-          (emptyFlows[outPath[k].ID])++;
+          cout << brain[i].outPath[k].dest << ' ';
+          (emptyFlows[brain[i].outPath[k].ID])++;
         }
         cout << endl;
+
 
         brain[i].fed = 1;
       }
     }
   }
+
   if(brain[0].fed == 0)
   {
     cout << "Blood cell #0" << endl;
-    Vessel2* outPath = new Vessel2[depth];
-    int outLength = 0;
-    generatePath(brain[0], outPath, outLength, cellCount - 1);
+    if(brain[0].outPath == NULL)
+    {
+      brain[0].outPath = new Vessel2[depth];
+      generatePath(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    }
     cout << " OutPath: ";
-    printPath(outPath, outLength);
+    printPath(brain[0].outPath, brain[0].outLength);
     //cout << inLength << ' ' << outLength << endl;
-    if(checkCapacity(outPath, outLength, fullFlows, emptyFlows))
+    if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
     {
       cout << " Empty Path: ";
-      for(int k = 0; k < outLength; k++)
+      for(int k = 0; k < brain[0].outLength; k++)
       {
-        cout << outPath[k].dest << ' ';
-        (emptyFlows[outPath[k].ID])++;
+        cout << brain[0].outPath[k].dest << ' ';
+        (emptyFlows[brain[0].outPath[k].ID])++;
       }
       cout << endl;
 
@@ -164,24 +173,26 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
   if(brain[cellCount - 1].fed == 0)
   {
-    cout << "Blood cell #" << cellCount - 1 << endl;
-    Vessel2* outPath = new Vessel2[depth];
-    int outLength = 0;
-    generatePath(brain[0], outPath, outLength, cellCount - 1);
+    cout << "Blood cell #0" << endl;
+    if(brain[0].outPath == NULL)
+    {
+      brain[0].outPath = new Vessel2[depth];
+      generatePath(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    }
     cout << " InPath: ";
-    printPath(outPath, outLength);
+    printPath(brain[0].outPath, brain[0].outLength);
     //cout << inLength << ' ' << outLength << endl;
-    if(checkCapacity(outPath, outLength, fullFlows, emptyFlows))
+    if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
     {
       cout << " Full Path: ";
-      for(int k = 0; k < outLength; k++)
+      for(int k = 0; k < brain[0].outLength; k++)
       {
-        cout << outPath[k].dest << ' ';
-        (fullFlows[outPath[k].ID])++;
+        cout << brain[0].outPath[k].dest << ' ';
+        (fullFlows[brain[0].outPath[k].ID])++;
       }
       cout << endl;
 
-      brain[cellCount - 1].fed = 1;
+      brain[0].fed = 1;
     }
   }
 
@@ -214,6 +225,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
   //debug printing
 
+
   cout << ">Indx: ";
   for(int i = 0; i < vesselCount; i++)
   {
@@ -244,6 +256,7 @@ int Blood::generatePath(BrainCell &cell, Vessel2* p, int &length, int end)
   //int end = cellCount - 1;
   for(int i = 0; i < cell.outgoing; i++)
   {
+    //cout << "P " << cell.out[0].src << ',' << i << endl;
     if(cell.out[i].dest != end)
     {
       if(end != cellCount - 1)
@@ -255,6 +268,8 @@ int Blood::generatePath(BrainCell &cell, Vessel2* p, int &length, int end)
           p[length++] = cell.out[i];
           if(generatePath(brain[cell.out[i].dest], p, length, end))
             return 1;
+          else
+            length--;
         }
       }
       else
@@ -264,6 +279,8 @@ int Blood::generatePath(BrainCell &cell, Vessel2* p, int &length, int end)
         p[length++] = cell.out[i];
         if(generatePath(brain[cell.out[i].dest], p, length, end))
           return 1;
+        else
+          length--;
       }
 
     }
@@ -275,6 +292,31 @@ int Blood::generatePath(BrainCell &cell, Vessel2* p, int &length, int end)
       return 1;
     }
   }
+  return -1;
+}
+
+int Blood::generatePath2(BrainCell &cell, Vessel2* p, int &length, int end)
+{
+  //cout << "Cell ID#" << cell.ID << endl;
+  //int end = cellCount - 1;
+  if(cell.ID == end)
+  {
+    length = 0;
+    return 1;
+  }
+
+  if(cell.ID == cellCount - 1)
+    return 0;
+
+  for(int i = 0; i < cell.outgoing; i++)
+  {
+    if(generatePath2(brain[cell.out[i].dest], p, length, end) == 1)
+    {
+      p[length++] = cell.out[i];
+      return 1;
+    }
+  }
+
   return -1;
 }
 
@@ -291,7 +333,7 @@ int Blood::checkCapacity(Vessel2* temp, int length, int full[], int empty[])
 
 void Blood::printPath(Vessel2* temp, int length)
 {
-  for(int i = 0; i < length; i++)
-    cout << temp[i].dest << ' ';
+  for(int i = length - 1; i >= 0; i--)
+    cout << temp[i].dest << ',' << temp[i].ID << ' ';
   cout << endl;
 }
