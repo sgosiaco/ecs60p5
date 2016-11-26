@@ -55,6 +55,7 @@ void checkFlows(Vessel vessels[], int fullFlows[], int emptyFlows[],
     {
       if(!cells[i].fed)
       {
+        cout << "!!Cell #" << cellCount1 << " Fed!" << endl;
         (*totalFed)++;
         cells[i].fed = true;
       }
@@ -78,6 +79,7 @@ void checkFlows(Vessel vessels[], int fullFlows[], int emptyFlows[],
 
   if(cells[cellCount1].inFullCount > 0 && !cells[cellCount1].fed)
   {
+    cout << "!!Cell #" << cellCount1 << " Fed!" << endl;
     cells[cellCount1].fed = true;
     (*totalFed)++;
   }  // if last cell is getting first fed
@@ -115,7 +117,7 @@ int main(int argc, char *argv[])
     if(theirTotalFed != totalFed)
       cout << "At pulse #" << pulses << " your number fed, " << theirTotalFed
         << ", does not match ours, " << totalFed << endl;
-  } while(++pulses < 2  && totalFed < cellCount); //10000
+  } while(++pulses < 10  && totalFed < cellCount); //10000
 
   cout << "Time: " << ct.cur_CPUTime() << " Pulses: " << pulses << endl;
 
