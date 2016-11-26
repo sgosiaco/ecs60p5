@@ -5,6 +5,29 @@
 
 using namespace std;
 
+int Blood::path(BrainCell &cell, int flow, Vessel2 &prev)
+{
+  for(int i = 0; i < cell.outgoing; i++)
+  {
+    Vessel2 *vessel = &(cell.out[i]);
+    int dest = vessel->dest;
+    if(flow == 0)
+      flow = vessel->capacity;
+    //cout << "Vessel:" << vessel->ID << ' ' << vessel->src << ' ' << dest << ' ' << brain[dest].fed << ' ' << vessel->carrying << ' ' << flow << endl;
+    if(!(brain[dest].fed))
+    {
+      brain[dest].fed = 1;
+      //(vessel->carrying)++;
+      flow--;
+    }
+    (vessel->carrying)++;
+    //cout << "Vessel:" << vessel->ID << ' ' << vessel->src << ' ' << dest << ' ' << brain[dest].fed << ' ' << vessel->carrying << ' ' << flow << endl;
+    if(flow != 0)
+      path(brain[dest], flow, *vessel);
+  }
+  return 1;
+}
+
 Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 {
   //copying vessels
@@ -60,43 +83,22 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 
   this->cellCount = cellCount;
   this->vesselCount = vesselCount;
+  this->depth = depth;
+
+  currentPath = new Vessel2[depth];
 } // Blood()
 
 
 int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
-  /*
-  for(int i = 0; i < brain[0].outgoing; i++) //look at each path out of the origin cell
-  {
-    int temp = brain[0].out[i].dest; //get each destination cell from the ith vessel
-    int capacity = brain[0].out[i].capacity; //get capacity of the ith vessel
-    for(int k = 0; k < capacity; k++) //continue down a path while we still have capacity
-    {
-      if(!(brain[temp].fed))
-      {
-        brain[temp].fed = 1;
-      }
-      temp = brain[temp].out[0].dest;
-    }
-
-  }
-  */
-  /*
-  for(int i = 0; i < brain[0].outgoing; i++)
-  {
-    int pos = brain[0].out[i].dest;
-    int cap = brain[0].out[i].capacity;
-    path(brain[pos], cap, brain[0].out[i]);
-  }
-  */
   for(int i = 0; i < vesselCount; i++)
     fullFlows[i] = emptyFlows[i] = 0;
 
   int numFed = 0;
-  if(!brain[0].fed)
-    brain[0].fed = 1;
+  //if(!brain[0].fed)
+    //brain[0].fed = 1;
 
-  path(brain[0], brain[0].out[0].capacity, brain[0].out[0]);
+  //path(brain[0], brain[0].out[0].capacity, brain[0].out[0]);
 
   cout << ">Fed ";
   for(int i = 0; i < cellCount; i++)
@@ -107,95 +109,107 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
   }
   cout << endl;
 
-  /*
-  for(int i = 0; i < vesselCount; i++)
-  {
-    cout << vessel[i].ID << ' ' << vessel[i].carrying << endl;
-  }
-  */
 
-  for(int i = 0; i < cellCount; i++)
+  //feed everything except first node.
+  for(int i = 1; i < cellCount; i++)
   {
-    for(int k = 0; k < brain[i].outgoing; k++)
+    cout << "Blood cell #" << i << endl;
+    Vessel2* inPath = new Vessel2[depth];
+    Vessel2* outPath = new Vessel2[depth];
+    int inLength = 0;
+    int outLength = 0;
+    generatePath(brain[0], inPath, inLength, i);
+    generatePath(brain[i], outPath, outLength, cellCount - 1);
+    cout << "PATH:\n";
+    printPath(inPath, inLength);
+    printPath(outPath, outLength);
+    //cout << inLength << ' ' << outLength << endl;
+    if(checkCapacity(inPath, inLength, fullFlows, emptyFlows) && checkCapacity(outPath, outLength, fullFlows, emptyFlows))
     {
-      //scout << i << ' ' << brain[i].out[k].ID << ' ' << brain[i].out[k].carrying << endl;
-      if(brain[i].out[k].carrying > 0)
+      cout << "Path: ";
+      for(int p = 0; p < inLength; p++)
       {
-        int ID = brain[i].out[k].ID;
-        int out = brain[i].out[k].dest;
-        int ez = 0;
-        (fullFlows[ID])++;
-        if(out != cellCount - 1)
-        {
-          //find path to end node.
-          for(int p = 0; p < brain[out].outgoing; p++)
-          {
-            if(brain[out].out[p].dest == cellCount - 1)
-            {
-              emptyFlows[brain[out].out[p].ID] += brain[i].out[k].carrying;
-              ez = 1;
-              break;
-            }
-          }
-        }
-        brain[i].out[k].carrying = 0;
+        cout << inPath[p].dest << ' ';
+        (fullFlows[inPath[p].ID])++;
       }
+      for(int k = 0; k < outLength; k++)
+      {
+        cout << outPath[k].dest << ' ';
+        (emptyFlows[outPath[k].ID])++;
+      }
+      cout << endl;
     }
   }
 
+
   /*
-  file 6-12-1
-  if(brain[4].fed == 0)
+  for(int i = 0; i < cellCount - 1; i++)
   {
-    emptyFlows[6] = 1;
-    emptyFlows[8] = 2;
+    cout << "Path " << i << ": ";
+    Vessel2* temp = new Vessel2[vesselCount];
+    int t = 0;
+    generatePath(brain[i], temp, t, cellCount - 1);
+    cout << "Vessel array " << i << ": ";
+    for(int k = 0; k < t; k++)
+    {
+      cout  << temp[k].dest << ' ';
+    }
+    cout << endl;
   }
   */
 
   //debug printing
+  /*
   cout << ">Indx: ";
   for(int i = 0; i < vesselCount; i++)
   {
-    cout << i << ' ';
+    cout << i << ":" << fullFlows[i] << ',' << emptyFlows[i] << ' ';
   }
   cout << endl;
-
-  cout << ">Full: ";
-  for(int i = 0; i < vesselCount; i++)
-  {
-    cout << fullFlows[i] << ' ';
-  }
-  cout << endl;
-
-  cout << ">Empt: ";
-  for(int i = 0; i < vesselCount; i++)
-  {
-    cout << emptyFlows[i] << ' ';
-  }
-  cout << endl;
+  */
 
   return numFed;  // to avoid warning for now
 } // calcFlows()f
 
-int Blood::path(BrainCell &cell, int flow, Vessel2 &prev)
+int Blood::generatePath(BrainCell &cell, Vessel2* p, int &length, int end)
 {
+  //int end = cellCount - 1;
   for(int i = 0; i < cell.outgoing; i++)
   {
-    Vessel2 *vessel = &(cell.out[i]);
-    int dest = vessel->dest;
-    if(flow == 0)
-      flow = vessel->capacity;
-    cout << "Vessel:" << vessel->ID << ' ' << vessel->src << ' ' << dest << ' ' << brain[dest].fed << ' ' << vessel->carrying << ' ' << flow << endl;
-    if(!(brain[dest].fed))
+    if(cell.out[i].dest != end)
     {
-      brain[dest].fed = 1;
-      //(vessel->carrying)++;
-      flow--;
+      //cout << cell.out[i].ID << ',' << cell.out[i].dest << ' ';
+      cout << cell.out[i].dest << ' ';
+      p[length++] = cell.out[i];
+      if(generatePath(brain[cell.out[i].dest], p, length, end))
+        return 1;
     }
-    (vessel->carrying)++;
-    //cout << "Vessel:" << vessel->ID << ' ' << vessel->src << ' ' << dest << ' ' << brain[dest].fed << ' ' << vessel->carrying << ' ' << flow << endl;
-    if(flow != 0)
-      path(brain[dest], flow, *vessel);
+    else
+    {
+      //cout << cell.out[i].ID << ',' << cell.out[i].dest << endl;
+      cout << cell.out[i].dest << endl;
+      p[length++] = cell.out[i];
+      return 1;
+    }
+  }
+  return -1;
+}
+
+int Blood::checkCapacity(Vessel2* temp, int length, int full[], int empty[])
+{
+  for(int i = 0; i < length; i++)
+  {
+    cout << "ID " << temp[i].ID << endl;
+    if(full[temp[i].ID] + empty[temp[i].ID] + 1 > temp[i].capacity)
+      return 0;
   }
   return 1;
+}
+
+void Blood::printPath(Vessel2* temp, int length)
+{
+  cout << "    Length: " << length << ' ';
+  for(int i = 0; i < length; i++)
+    cout << temp[i].dest << ' ';
+  cout << endl;
 }

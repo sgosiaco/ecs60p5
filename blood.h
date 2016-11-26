@@ -15,8 +15,13 @@ public:
   int* count;
   int cellCount;
   int vesselCount;
+  int depth;
   Vessel2* vessel;
   int path(BrainCell &cell, int flow, Vessel2 &prev);
+  Vessel2* currentPath;
+  int generatePath(BrainCell &cell, Vessel2* p, int &length, int end);
+  int checkCapacity(Vessel2 *temp, int length, int full[], int empty[]);
+  void printPath(Vessel2 *temp, int length);
 }; // class Blood
 
 #endif
