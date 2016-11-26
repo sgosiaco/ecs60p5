@@ -55,7 +55,6 @@ void checkFlows(Vessel vessels[], int fullFlows[], int emptyFlows[],
     {
       if(!cells[i].fed)
       {
-        cout << "!!Cell #" << cellCount1 << " Fed!" << endl;
         (*totalFed)++;
         cells[i].fed = true;
       }
@@ -79,7 +78,6 @@ void checkFlows(Vessel vessels[], int fullFlows[], int emptyFlows[],
 
   if(cells[cellCount1].inFullCount > 0 && !cells[cellCount1].fed)
   {
-    cout << "!!Cell #" << cellCount1 << " Fed!" << endl;
     cells[cellCount1].fed = true;
     (*totalFed)++;
   }  // if last cell is getting first fed
