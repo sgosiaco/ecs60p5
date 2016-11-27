@@ -350,10 +350,11 @@ void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
 {
   //cout << "Cell ID#" << cell.ID << endl;
   //int end = cellCount - 1;
-  StackAr <BrainCell*> stack(30);
+  StackAr <BrainCell*> stack(100);
 
   for(int i = 0; i < cell.outgoing; i++)
   {
+    cout << "PUSHED " << cell.out[i].dest << endl;
     stack.push(&(brain[cell.out[i].dest]));
     while(!stack.isEmpty())
     {
@@ -366,7 +367,7 @@ void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
         length = 0;
       p[length++] = cell.out[i];
       for(int k = 0; k < cur->outgoing; k++)
-        stack.push(&(brain[cell.out[i].dest]));
+        stack.push(&(brain[cur->out[k].dest]));
     }
   }
 }
