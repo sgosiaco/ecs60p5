@@ -1,5 +1,6 @@
 #include "blood.h"
 #include "bloodRunner.h"
+#include "StackAr.h"
 #include <iostream>
 #include <cstring>
 
@@ -30,7 +31,7 @@ int Blood::path(BrainCell &cell, int flow, Vessel2 &prev)
 
 Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 {
-  debug = 0;
+  debug = 1;
   //copying vessels
   vessel = new Vessel2[vesselCount];
   for(int i = 0; i < vesselCount; i++)
@@ -109,9 +110,9 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
   {
     if(debug)
       cout << "Blood cell #" << i << endl;
-    //Vessel2* inPath = new Vessel2[depth];
+    Vessel2* inPathTemp = new Vessel2[depth];
     //Vessel2* outPath = new Vessel2[depth];
-    //int inLength = 0;
+    int inLengthTemp = 0;
     //int outLength = 0;
     if(brain[i].fed == 0)
     {
@@ -120,11 +121,13 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         brain[i].inPath = new Vessel2[depth];
         brain[i].outPath = new Vessel2[depth];
         generatePath2(brain[0], brain[i].inPath, brain[i].inLength, i);
+        generatePathStack(brain[0], inPathTemp, inLengthTemp, i);
         generatePath2(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
       }
 
       if(debug)
       {
+        printPath(inPathTemp, inLengthTemp);
         cout << " InPath: ";
         printPath(brain[i].inPath, brain[i].inLength);
         cout << " inLength: " << brain[i].inLength << endl;
@@ -221,6 +224,12 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       numFed++;
   }
   cout << endl;
+
+  for(int i = 0; i < vesselCount; i++)
+    fullFlows[i] = emptyFlows[i] = 0;
+
+  fullFlows[6] = fullFlows[0] = fullFlows[3] = 1;
+  emptyFlows[1] = emptyFlows[10] = 1;
 
 
 
@@ -335,6 +344,31 @@ int Blood::generatePath2(BrainCell &cell, Vessel2* p, int &length, int end)
   }
 
   return -1;
+}
+
+void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
+{
+  //cout << "Cell ID#" << cell.ID << endl;
+  //int end = cellCount - 1;
+  StackAr <BrainCell*> stack(30);
+
+  for(int i = 0; i < cell.outgoing; i++)
+  {
+    stack.push(&(brain[cell.out[i].dest]));
+    while(!stack.isEmpty())
+    {
+      BrainCell *cur = stack.topAndPop();
+      if(cur->ID == end)
+      {
+        return;
+      }
+      if(cur->ID == cellCount - 1)
+        length = 0;
+      p[length++] = cell.out[i];
+      for(int k = 0; k < cur->outgoing; k++)
+        stack.push(&(brain[cell.out[i].dest]));
+    }
+  }
 }
 
 int Blood::checkCapacity(Vessel2* temp, int length, int full[], int empty[])
