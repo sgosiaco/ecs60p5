@@ -253,12 +253,6 @@ int Blood::generatePath2(BrainCell &cell, Vessel2* p, int &length, int end)
     return 1;
   }
 
-  if(length > depth)
-  {
-    length--;
-    return 0;
-  }
-
   if(cell.ID == cellCount - 1)
     return 0;
 
