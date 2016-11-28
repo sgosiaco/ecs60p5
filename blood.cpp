@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(cellCount)
 {
   debug = 0;
   pathsCreated = 0;
@@ -42,17 +42,6 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
     brain[i].create(temp[i], count[i], i);
   }
 
-  //printing out list
-  /*
-  for(int i = 0; i < cellCount; i++)
-  {
-    cout << i << ' ' << count[i] << ':';
-    for(int k = 0; k < count[i]; k++)
-      cout << ' ' << temp[i][k].dest << '(' << temp[i][k].capacity << ')';
-    cout << endl;
-  }
-  */
-
   if(debug)
   {
     cout << "ID Out Fed" << endl;
@@ -72,7 +61,11 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
   this->vesselCount = vesselCount;
   this->depth = depth;
 
-  currentPath = new Vessel2[depth];
+  delete count;
+  for(int i = 0; i < cellCount; i++)
+    delete temp[i];
+  delete temp;
+  delete vessel;
 } // Blood()
 
 
@@ -80,8 +73,6 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
   for(int i = 0; i < vesselCount; i++)
     fullFlows[i] = emptyFlows[i] = 0;
-
-  int numFed = 0;
 
   if(!pathsCreated)
   {
@@ -122,7 +113,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       }
     }
     brain[0].outPath = new Vessel2[depth];
-    generatePath2(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    generatePathQueue(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
     pathsCreated = 1;
   }
 
@@ -185,28 +176,15 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
   if(brain[cellCount - 1].fed == 0 && totalFed == cellCount - 1)
   {
-    //cout << "Blood cell #0" << endl;
-    //cout << " InPath: ";
-    //printPath(brain[0].outPath, brain[0].outLength);
-    //cout << inLength << ' ' << outLength << endl;
     if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
     {
-      //cout << " Full Path: ";
       for(int k = 0; k < brain[0].outLength; k++)
       {
-        //cout << brain[0].outPath[k].dest << ' ';
         (fullFlows[brain[0].outPath[k].ID])++;
       }
-      //cout << endl;
-
       brain[cellCount - 1].fed = 1;
+      totalFed++;
     }
-  }
-
-  for(int i = 0; i < cellCount; i++)
-  {
-    if(brain[i].fed)
-      numFed++;
   }
 
   //debug printing
@@ -242,8 +220,8 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     cout << endl;
   }
 
-  return numFed;  // to avoid warning for now
-} // calcFlows()f
+  return totalFed;  // to avoid warning for now
+} // calcFlows()
 
 int Blood::generatePath2(BrainCell &cell, Vessel2* p, int &length, int end)
 {
@@ -322,60 +300,9 @@ void Blood::generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, i
   cell.visited = 0;
 }
 
-void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
-{
-  //cout << "Cell ID#" << cell.ID << endl;
-  //int end = cellCount - 1;
-  StackAr <Vessel2*> stack(100);
-
-  for(int i = 0; i < cell.outgoing; i++)
-  {
-    cout << "PUSHED " << cell.out[i].ID << endl;
-    stack.push(&(cell.out[i]));
-
-  }
-
-  while(!stack.isEmpty())
-  {
-    Vessel2 *cur = stack.topAndPop();
-    cout << "POPPED " << cur->ID << endl;
-    if(cur->dest == end)
-    {
-      cout << "MATCH " << cur->ID << ' ' << length << endl;
-      if(length == 0)
-        p[length++] = *cur;
-      else
-      {
-        p[length - 1] = *cur;
-      }
-      return;
-    }
-
-    if(cur->dest == cellCount - 1 && cur->src != p[length].src)
-      length--;
-    else
-      if(cur->dest != cellCount - 1)
-        p[length++] = *cur;
-
-    if(cur->dest != cellCount - 1)
-      for(int k = 0; k < brain[cur->dest].outgoing; k++)
-      {
-        cout << "PUSHED " << brain[cur->dest].out[k].ID << endl;
-        stack.push(&(brain[cur->dest].out[k]));
-      }
-    cout << "Length: " << length << " P: ";
-    for(int i = 0; i < length; i++)
-    {
-      cout << p[i].ID << ' ';
-    }
-    cout << endl;
-  }
-}
-
 void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 {
-  Queue <BrainCell*> queue(5000);
-  vector <int> vec(cellCount);
+  Queue <BrainCell*> queue(vesselCount);
   for(int i = 0; i < cellCount; i++)
     vec[i] = -1;
   queue.enqueue(&cell);
