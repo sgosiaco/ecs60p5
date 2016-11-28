@@ -302,7 +302,7 @@ void Blood::generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, i
 
 void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 {
-  Queue <BrainCell*> queue(vesselCount);
+  Queue <BrainCell*> queue(vesselCount + 1);
   for(int i = 0; i < cellCount; i++)
     vec[i] = -1;
   queue.enqueue(&cell);
