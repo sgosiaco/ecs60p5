@@ -17,6 +17,8 @@ public:
   int vesselCount;
   int depth;
   int debug;
+  int pathsCreated;
+  int totalFed;
   Vessel2* vessel;
   int path(BrainCell &cell, int flow, Vessel2 &prev);
   Vessel2* currentPath;

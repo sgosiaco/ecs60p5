@@ -31,7 +31,9 @@ int Blood::path(BrainCell &cell, int flow, Vessel2 &prev)
 
 Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth)
 {
-  debug = 1;
+  debug = 0;
+  pathsCreated = 0;
+  totalFed = 0;
   //copying vessels
   vessel = new Vessel2[vesselCount];
   for(int i = 0; i < vesselCount; i++)
@@ -104,29 +106,21 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
   //path(brain[0], brain[0].out[0].capacity, brain[0].out[0]);
 
-
-  //feed everything except first node.
-  for(int i = 1; i < cellCount - 1; i++)
+  if(!pathsCreated)
   {
-    if(debug)
-      cout << "Blood cell #" << i << endl;
     Vessel2* inPathTemp = new Vessel2[depth];
-    //Vessel2* outPath = new Vessel2[depth];
     int inLengthTemp = 0;
-    //int outLength = 0;
-    if(brain[i].fed == 0)
+    
+    for(int i = 1; i < cellCount - 1; i++)
     {
-      if(brain[i].inPath == NULL)
-      {
-        brain[i].inPath = new Vessel2[depth];
-        brain[i].outPath = new Vessel2[depth];
-        generatePath2(brain[0], brain[i].inPath, brain[i].inLength, i);
-        generatePathStack(brain[0], inPathTemp, inLengthTemp, i);
-        generatePath2(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
-      }
-
+      brain[i].inPath = new Vessel2[depth];
+      brain[i].outPath = new Vessel2[depth];
+      generatePath2(brain[0], brain[i].inPath, brain[i].inLength, i);
+      generatePathStack(brain[0], inPathTemp, inLengthTemp, i);
+      generatePath2(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
       if(debug)
       {
+        cout << " Stack: ";
         printPath(inPathTemp, inLengthTemp);
         cout << " InPath: ";
         printPath(brain[i].inPath, brain[i].inLength);
@@ -135,8 +129,42 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         printPath(brain[i].outPath, brain[i].outLength);
         //cout << inLength << ' ' << outLength << endl;
       }
+    }
+    brain[0].outPath = new Vessel2[depth];
+    generatePath(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    pathsCreated = 1;
+  }
 
-      if(checkCapacity(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows))
+  if(brain[0].fed == 0)
+  {
+    if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
+    {
+      for(int k = 0; k < brain[0].outLength; k++)
+      {
+        (emptyFlows[brain[0].outPath[k].ID])++;
+      }
+
+      brain[0].fed = 1;
+      totalFed++;
+    }
+  }
+
+  //feed everything except first node.
+  for(int i = 1; i < cellCount - 1; i++)
+  {
+    int dontFeed = 0;
+
+    if(debug)
+      cout << "Blood cell #" << i << endl;
+
+    if(brain[i].fed == 0)
+    {
+      for(int k = 0; k < brain[i].inLength - 1; k++)
+      {
+        if(brain[brain[i].inPath[k].src].fed == 0)
+          dontFeed = 1;
+      }
+      if(checkCapacity(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows) && !dontFeed)
       {
         if(debug)
           cout << " Full Path: ";
@@ -162,43 +190,14 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
 
         brain[i].fed = 1;
+        totalFed++;
       }
     }
   }
 
-  if(brain[0].fed == 0)
+  if(brain[cellCount - 1].fed == 0 && totalFed == cellCount - 1)
   {
     //cout << "Blood cell #0" << endl;
-    if(brain[0].outPath == NULL)
-    {
-      brain[0].outPath = new Vessel2[depth];
-      generatePath(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
-    }
-    //cout << " OutPath: ";
-    //printPath(brain[0].outPath, brain[0].outLength);
-    //cout << inLength << ' ' << outLength << endl;
-    if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
-    {
-      //cout << " Empty Path: ";
-      for(int k = 0; k < brain[0].outLength; k++)
-      {
-        //cout << brain[0].outPath[k].dest << ' ';
-        (emptyFlows[brain[0].outPath[k].ID])++;
-      }
-      //cout << endl;
-
-      brain[0].fed = 1;
-    }
-  }
-
-  if(brain[cellCount - 1].fed == 0)
-  {
-    //cout << "Blood cell #0" << endl;
-    if(brain[0].outPath == NULL)
-    {
-      brain[0].outPath = new Vessel2[depth];
-      generatePath(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
-    }
     //cout << " InPath: ";
     //printPath(brain[0].outPath, brain[0].outLength);
     //cout << inLength << ' ' << outLength << endl;
@@ -216,22 +215,11 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     }
   }
 
-  cout << ">Fed ";
   for(int i = 0; i < cellCount; i++)
   {
-    cout << brain[i].fed << ' ';
     if(brain[i].fed)
       numFed++;
   }
-  cout << endl;
-
-  for(int i = 0; i < vesselCount; i++)
-    fullFlows[i] = emptyFlows[i] = 0;
-
-  fullFlows[6] = fullFlows[0] = fullFlows[3] = 1;
-  emptyFlows[1] = emptyFlows[10] = 1;
-
-
 
   /*
   for(int i = 0; i < cellCount - 1; i++)
@@ -248,31 +236,38 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     cout << endl;
   }
   */
-
   //debug printing
 
-
-  cout << ">Indx: ";
-  for(int i = 0; i < vesselCount; i++)
+  if(debug)
   {
-    cout << i << ' ';
-  }
-  cout << endl;
+    cout << ">Fed ";
+    for(int i = 0; i < cellCount; i++)
+    {
+      cout << brain[i].fed << ' ';
+    }
+    cout << endl;
 
-  cout << ">Full: ";
-  for(int i = 0; i < vesselCount; i++)
-  {
-    cout << fullFlows[i] << ' ';
-  }
-  cout << endl;
+    cout << ">Indx: ";
+    for(int i = 0; i < vesselCount; i++)
+    {
+      cout << i << ' ';
+    }
+    cout << endl;
 
-  cout << ">Empt: ";
-  for(int i = 0; i < vesselCount; i++)
-  {
-    cout << emptyFlows[i] << ' ';
-  }
-  cout << endl;
+    cout << ">Full: ";
+    for(int i = 0; i < vesselCount; i++)
+    {
+      cout << fullFlows[i] << ' ';
+    }
+    cout << endl;
 
+    cout << ">Empt: ";
+    for(int i = 0; i < vesselCount; i++)
+    {
+      cout << emptyFlows[i] << ' ';
+    }
+    cout << endl;
+  }
 
   return numFed;  // to avoid warning for now
 } // calcFlows()f
@@ -350,25 +345,49 @@ void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
 {
   //cout << "Cell ID#" << cell.ID << endl;
   //int end = cellCount - 1;
-  StackAr <BrainCell*> stack(100);
+  StackAr <Vessel2*> stack(100);
 
   for(int i = 0; i < cell.outgoing; i++)
   {
-    cout << "PUSHED " << cell.out[i].dest << endl;
-    stack.push(&(brain[cell.out[i].dest]));
-    while(!stack.isEmpty())
+    cout << "PUSHED " << cell.out[i].ID << endl;
+    stack.push(&(cell.out[i]));
+
+  }
+
+  while(!stack.isEmpty())
+  {
+    Vessel2 *cur = stack.topAndPop();
+    cout << "POPPED " << cur->ID << endl;
+    if(cur->dest == end)
     {
-      BrainCell *cur = stack.topAndPop();
-      if(cur->ID == end)
+      cout << "MATCH " << cur->ID << ' ' << length << endl;
+      if(length == 0)
+        p[length++] = *cur;
+      else
       {
-        return;
+        p[length - 1] = *cur;
       }
-      if(cur->ID == cellCount - 1)
-        length = 0;
-      p[length++] = cell.out[i];
-      for(int k = 0; k < cur->outgoing; k++)
-        stack.push(&(brain[cur->out[k].dest]));
+      return;
     }
+
+    if(cur->dest == cellCount - 1 && cur->src != p[length].src)
+      length--;
+    else
+      if(cur->dest != cellCount - 1)
+        p[length++] = *cur;
+
+    if(cur->dest != cellCount - 1)
+      for(int k = 0; k < brain[cur->dest].outgoing; k++)
+      {
+        cout << "PUSHED " << brain[cur->dest].out[k].ID << endl;
+        stack.push(&(brain[cur->dest].out[k]));
+      }
+    cout << "Length: " << length << " P: ";
+    for(int i = 0; i < length; i++)
+    {
+      cout << p[i].ID << ' ';
+    }
+    cout << endl;
   }
 }
 
