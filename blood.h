@@ -20,9 +20,7 @@ public:
   int pathsCreated;
   int totalFed;
   Vessel2* vessel;
-  int path(BrainCell &cell, int flow, Vessel2 &prev);
   Vessel2* currentPath;
-  int generatePath(BrainCell &cell, Vessel2* p, int &length, int end);
   int generatePath2(BrainCell &cell, Vessel2* p, int &length, int end);
   void generatePath3(BrainCell &cell, BrainCell* p, int &length, int end);
   void generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, int start);
