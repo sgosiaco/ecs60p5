@@ -108,20 +108,34 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
   if(!pathsCreated)
   {
-    Vessel2* inPathTemp = new Vessel2[depth];
+    /*
+    BrainCell* inPathTemp = new BrainCell[depth];
+    BrainCell* outPathTemp = new BrainCell[depth];
     int inLengthTemp = 0;
-    
+    int outLengthTemp = 0;
+    */
+
     for(int i = 1; i < cellCount - 1; i++)
     {
       brain[i].inPath = new Vessel2[depth];
       brain[i].outPath = new Vessel2[depth];
+      //generatePathStack(brain[0], inPathTemp, inLengthTemp, i);
       generatePath2(brain[0], brain[i].inPath, brain[i].inLength, i);
-      generatePathStack(brain[0], inPathTemp, inLengthTemp, i);
       generatePath2(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
+      //generatePath3(brain[0], inPathTemp, inLengthTemp, i);
+      //generatePath4(brain[i], outPathTemp, outLengthTemp, cellCount-1, i);
+
       if(debug)
       {
-        cout << " Stack: ";
-        printPath(inPathTemp, inLengthTemp);
+        /*
+        cout << " Path3: ";
+        for(int op = 0; op < inLengthTemp; op++)
+        {
+          cout << inPathTemp[op].ID << ' ';
+        }
+        cout << endl;
+        */
+        //printPath(inPathTemp, inLengthTemp);
         cout << " InPath: ";
         printPath(brain[i].inPath, brain[i].inLength);
         cout << " inLength: " << brain[i].inLength << endl;
@@ -339,6 +353,58 @@ int Blood::generatePath2(BrainCell &cell, Vessel2* p, int &length, int end)
   }
 
   return -1;
+}
+
+void Blood::generatePath3(BrainCell &cell, BrainCell* p, int &length, int end)
+{
+  cell.visited = 1;
+  p[length++] = cell;
+  if(cell.ID == end)
+  {
+    if(debug)
+    {
+      for(int i = 0; i < length; i++)
+        cout << p[i].ID << ' ';
+      cout << endl;
+    }
+    brain[end].updateInPath(p, length);
+  }
+  else
+  {
+    for(int i = 0; i < cell.outgoing; i++)
+    {
+      if(brain[cell.out[i].dest].visited == 0)
+        generatePath3(brain[cell.out[i].dest], p, length, end);
+    }
+  }
+  length--;
+  cell.visited = 0;
+}
+
+void Blood::generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, int start)
+{
+  cell.visited = 1;
+  p[length++] = cell;
+  if(cell.ID == end)
+  {
+    if(debug)
+    {
+      for(int i = 0; i < length; i++)
+        cout << p[i].ID << ' ';
+      cout << endl;
+    }
+    brain[start].updateOutPath(p, length);
+  }
+  else
+  {
+    for(int i = 0; i < cell.outgoing; i++)
+    {
+      if(brain[cell.out[i].dest].visited == 0)
+        generatePath4(brain[cell.out[i].dest], p, length, end, start);
+    }
+  }
+  length--;
+  cell.visited = 0;
 }
 
 void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
