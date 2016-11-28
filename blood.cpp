@@ -1,6 +1,8 @@
 #include "blood.h"
 #include "bloodRunner.h"
 #include "StackAr.h"
+#include "QueueAr.h"
+#include "vector.h"
 #include <iostream>
 #include <cstring>
 
@@ -95,8 +97,8 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       brain[i].inPath = new Vessel2[depth];
       brain[i].outPath = new Vessel2[depth];
       //generatePathStack(brain[0], inPathTemp, inLengthTemp, i);
-      generatePath2(brain[0], brain[i].inPath, brain[i].inLength, i);
-      generatePath2(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
+      generatePathQueue(brain[0], brain[i].inPath, brain[i].inLength, i);
+      generatePathQueue(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
       //generatePath3(brain[0], inPathTemp, inLengthTemp, i);
       //generatePath4(brain[i], outPathTemp, outLengthTemp, cellCount-1, i);
 
@@ -367,6 +369,43 @@ void Blood::generatePathStack(BrainCell &cell, Vessel2* p, int &length, int end)
       cout << p[i].ID << ' ';
     }
     cout << endl;
+  }
+}
+
+void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
+{
+  Queue <BrainCell*> queue(5000);
+  vector <int> vec(cellCount);
+  for(int i = 0; i < cellCount; i++)
+    vec[i] = -1;
+  queue.enqueue(&cell);
+  vec[cell.ID] = cell.ID;
+  while(!queue.isEmpty())
+  {
+    BrainCell *temp = queue.dequeue();
+    if(temp->ID == end)
+    {
+
+      do {
+        //cout << "source is" << vec[temp->ID] << " end is " << temp->ID << endl;
+        for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
+        {
+          if(brain[vec[temp->ID]].out[i].dest == temp->ID)
+            p[length++] = brain[vec[temp->ID]].out[i];
+        }
+        temp = &(brain[vec[temp->ID]]);
+      } while(temp->ID != cell.ID);
+
+      return;
+    }
+    for(int i = 0; i < temp->outgoing; i++)
+    {
+      if(vec[temp->out[i].dest] == -1)
+      {
+        vec[temp->out[i].dest] = temp->ID;
+        queue.enqueue(&(brain[temp->out[i].dest]));
+      }
+    }
   }
 }
 

@@ -11,6 +11,7 @@ BrainCell::BrainCell()
   inPath = outPath = NULL;
   inLength = outLength = 0;
   visited = 0;
+  source = 0;
 }
 
 
@@ -18,6 +19,7 @@ void BrainCell::create(Vessel2 in[], int count, int ID)
 {
   fed = 0;
   visited = 0;
+  source = 0;
   inLength = outLength = 0;
   inPath = outPath = NULL;
   this->ID = ID;

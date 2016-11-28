@@ -30,6 +30,7 @@ public:
   int inLength;
   int outLength;
   int visited;
+  int source;
 }; //class BrainCell
 
 #endif
