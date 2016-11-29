@@ -31,18 +31,6 @@ void BrainCell::create(Vessel2 in[], int count, int ID)
   }
 }
 
-void BrainCell::create(int count, int ID)
-{
-  fed = 0;
-  visited = 0;
-  source = 0;
-  inLength = outLength = 0;
-  inPath = outPath = NULL;
-  this->ID = ID;
-  outgoing = 0;
-  out = new Vessel2[count];
-}
-
 void Vessel2::copy(Vessel in, int count)
 {
   src = in.src;
