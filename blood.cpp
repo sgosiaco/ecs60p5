@@ -160,7 +160,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         {
           dontFeed = 1;
 
-          if(checkCapacityIn(brain[index].inPath, brain[index].inLength, fullFlows, emptyFlows) && checkCapacity(brain[index].outPath, brain[index].outLength, fullFlows, emptyFlows))
+          if(checkCapacity(brain[index].inPath, brain[index].inLength, fullFlows, emptyFlows) && checkCapacity(brain[index].outPath, brain[index].outLength, fullFlows, emptyFlows))
           {
             for(int p = brain[index].inLength - 1; p >= 0; p--)
               (fullFlows[brain[index].inPath[p].ID])++;
@@ -176,7 +176,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
           (brain[i].source)++;
       }
 
-      if(!dontFeed && checkCapacityIn(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows))
+      if(!dontFeed && checkCapacity(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows))
       {
         for(int p = brain[i].inLength - 1; p >= 0; p--)
           (fullFlows[brain[i].inPath[p].ID])++;
