@@ -8,11 +8,16 @@
 
 using namespace std;
 
+<<<<<<< HEAD
 Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) //: vec(cellCount)
+=======
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(cellCount), queue(vesselCount + 1)
+>>>>>>> 93b4992a6c507821fefb769c243b8bf52bf51d92
 {
   debug = 0;
   pathsCreated = 0;
   totalFed = 0;
+
   //copying vessels
   vessel = new Vessel2[vesselCount];
   for(int i = 0; i < vesselCount; i++)
@@ -34,7 +39,6 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) //: ve
     //cout << pos << endl;
     temp[pos][vec[pos]++] = vessel[i];
   }
-
 
   brain = new BrainCell[cellCount];
   for(int i = 0; i < cellCount; i++)
@@ -61,11 +65,15 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) //: ve
   this->vesselCount = vesselCount;
   this->depth = depth;
 
+<<<<<<< HEAD
   //delete count;
+=======
+  delete [] count;
+>>>>>>> 93b4992a6c507821fefb769c243b8bf52bf51d92
   for(int i = 0; i < cellCount; i++)
-    delete temp[i];
-  delete temp;
-  delete vessel;
+    delete [] temp[i];
+  delete [] temp;
+  delete [] vessel;
 } // Blood()
 
 
@@ -151,8 +159,8 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
     if(brain[i].fed == 0)
     {
-      /*
-      for(int k = brain[i].inLength - 1; k >= 0; k--)
+
+      for(int k = brain[i].inLength - 2 - brain[i].source; k >= 0; k--)
       {
         //cout << brain[i].inPath[k].src << ' ' << brain[i].inPath[k].dest << endl;
         int index = brain[i].inPath[k].src;
@@ -160,7 +168,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         {
           dontFeed = 1;
 
-          if(checkCapacity(brain[index].inPath, brain[index].inLength, fullFlows, emptyFlows) && checkCapacity(brain[index].outPath, brain[index].outLength, fullFlows, emptyFlows))
+          if(checkCapacityIn(brain[index].inPath, brain[index].inLength, fullFlows, emptyFlows) && checkCapacity(brain[index].outPath, brain[index].outLength, fullFlows, emptyFlows))
           {
             for(int p = brain[index].inLength - 1; p >= 0; p--)
               (fullFlows[brain[index].inPath[p].ID])++;
@@ -172,9 +180,11 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
 
         }
+        else
+          (brain[i].source)++;
       }
-      */
-      if(checkCapacityIn(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows) && !dontFeed)
+
+      if(!dontFeed && checkCapacityIn(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows))
       {
         for(int p = brain[i].inLength - 1; p >= 0; p--)
           (fullFlows[brain[i].inPath[p].ID])++;
@@ -183,6 +193,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         brain[i].fed = 1;
         totalFed++;
       }
+
     }
   }
 
@@ -314,7 +325,7 @@ void Blood::generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, i
 
 void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 {
-  Queue <BrainCell*> queue(vesselCount + 1);
+  //Queue <BrainCell*> queue(vesselCount + 1);
   for(int i = 0; i < cellCount; i++)
     vec[i] = -1;
   queue.enqueue(&cell);
@@ -334,6 +345,9 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
         }
         temp = &(brain[vec[temp->ID]]);
       } while(temp->ID != cell.ID);
+
+      while(!queue.isEmpty())
+        queue.dequeue();
 
       return;
     }

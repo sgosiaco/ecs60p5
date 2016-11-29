@@ -11,4 +11,4 @@ braincell.o : braincell.cpp braincell.h
 	g++ -Wall -ansi -c braincell.cpp
 
 clean:
-	rm -f blood.out blood.o bloodRunner.o
+	rm -f blood.out blood.o bloodRunner.o braincell.o
