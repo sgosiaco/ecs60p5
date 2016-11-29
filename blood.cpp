@@ -115,8 +115,17 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     brain[0].outPath = new Vessel2[depth];
     generatePathQueue(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
     pathsCreated = 1;
+
+    for(int k = 0; k < brain[0].outLength; k++)
+    {
+      (emptyFlows[brain[0].outPath[k].ID])++;
+    }
+
+    brain[0].fed = 1;
+    totalFed++;
   }
 
+  /*
   if(brain[0].fed == 0)
   {
     if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
@@ -130,6 +139,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       totalFed++;
     }
   }
+  */
 
   //feed everything except first node.
   for(int i = 1; i < cellCount - 1; i++)
