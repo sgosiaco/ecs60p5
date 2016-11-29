@@ -33,7 +33,8 @@
             void enqueue( const Object & x );
 
           private:
-            vector<Object> theArray;
+            //vector<Object> theArray;
+            Object* theArray;
             int            currentSize;
             int            front;
             int            back;

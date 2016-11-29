@@ -4,8 +4,9 @@
          * Construct the queue.
          */
         template <class Object>
-        Queue<Object>::Queue( int capacity ) : theArray( capacity )
+        Queue<Object>::Queue( int capacity ) //: theArray( capacity )
         {
+            theArray = new Object[capacity];
             makeEmpty( );
         }
 
