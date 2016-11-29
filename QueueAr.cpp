@@ -70,7 +70,9 @@
             currentSize--;
             //int temp = front;
             Object frontItem = theArray[ front ];
-            increment( front );
+            //increment( front );
+            if(++front == capacity - 1)
+              front = 0;
             return frontItem;
             //return theArray[temp];
         }
@@ -84,7 +86,9 @@
         {
             //if( isFull( ) )
               //  throw Overflow( );
-            increment( back );
+            //increment( back );
+            if(++back == capacity - 1)
+              back = 0;
             theArray[ back ] = x;
             currentSize++;
         }
