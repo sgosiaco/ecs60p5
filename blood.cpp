@@ -61,11 +61,11 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
   this->vesselCount = vesselCount;
   this->depth = depth;
 
-  delete count;
+  delete [] count;
   for(int i = 0; i < cellCount; i++)
-    delete temp[i];
-  delete temp;
-  delete vessel;
+    delete [] temp[i];
+  delete [] temp;
+  delete [] vessel;
 } // Blood()
 
 
