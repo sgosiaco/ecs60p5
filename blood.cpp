@@ -340,7 +340,7 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 
       //while(!queue.isEmpty())
         //queue.dequeue();
-      queue.currentSize = 0;
+      queue.makeEmpty();
 
       return;
     }
