@@ -1,7 +1,6 @@
         #ifndef _QUEUEAR_H
         #define _QUEUEAR_H
 
-        #include "vector.h"
         #include "dsexceptions.h"
 
         // Queue class -- array implementation
