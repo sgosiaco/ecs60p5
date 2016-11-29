@@ -7,6 +7,7 @@
         Queue<Object>::Queue( int capacity ) //: theArray( capacity )
         {
             theArray = new Object[capacity];
+            this->capacity = capacity;
             makeEmpty( );
         }
 
@@ -24,11 +25,13 @@
          * Test if the queue is logically full.
          * Return true if full, false otherwise.
          */
+        /*
         template <class Object>
         bool Queue<Object>::isFull( ) const
         {
             return currentSize == theArray.size( );
         }
+        */
 
         /**
          * Make the queue logically empty.
@@ -90,6 +93,7 @@
         template <class Object>
         void Queue<Object>::increment( int & x )
         {
-            if( ++x == theArray.size( ) )
+          //++x == theArray.size( )
+            if( ++x == capacity - 1)
                 x = 0;
         }

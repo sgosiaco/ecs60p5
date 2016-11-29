@@ -38,6 +38,7 @@
             int            currentSize;
             int            front;
             int            back;
+            int capacity;
 
             void increment( int & x );
         };
