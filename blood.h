@@ -27,6 +27,7 @@ public:
   void generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, int start);
   void generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end);
   int checkCapacity(Vessel2 *temp, int length, int full[], int empty[]);
+  int checkCapacityIn(Vessel2 *temp, int length, int full[], int empty[]);
   void printPath(Vessel2 *temp, int length);
 }; // class Blood
 

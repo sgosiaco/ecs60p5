@@ -141,6 +141,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
     if(brain[i].fed == 0)
     {
+      /*
       for(int k = brain[i].inLength - 1; k >= 0; k--)
       {
         //cout << brain[i].inPath[k].src << ' ' << brain[i].inPath[k].dest << endl;
@@ -148,7 +149,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         if(brain[index].fed == 0)
         {
           dontFeed = 1;
-          /*
+
           if(checkCapacity(brain[index].inPath, brain[index].inLength, fullFlows, emptyFlows) && checkCapacity(brain[index].outPath, brain[index].outLength, fullFlows, emptyFlows))
           {
             for(int p = brain[index].inLength - 1; p >= 0; p--)
@@ -158,11 +159,12 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
             brain[index].fed = 1;
             totalFed++;
           }
-          */
+
 
         }
       }
-      if(checkCapacity(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows) && !dontFeed)
+      */
+      if(checkCapacityIn(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows) && !dontFeed)
       {
         for(int p = brain[i].inLength - 1; p >= 0; p--)
           (fullFlows[brain[i].inPath[p].ID])++;
@@ -338,10 +340,21 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 
 int Blood::checkCapacity(Vessel2* temp, int length, int full[], int empty[])
 {
-  for(int i = 0; i < length; i++)
+  for(int i = length - 1; i >= 0; i--)
   {
     //cout << "ID " << temp[i].ID << endl;
     if(full[temp[i].ID] + empty[temp[i].ID] + 1 > temp[i].capacity)
+      return 0;
+  }
+  return 1;
+}
+
+int Blood::checkCapacityIn(Vessel2* temp, int length, int full[], int empty[])
+{
+  for(int i = length - 1; i >= 0; i--)
+  {
+    //cout << "ID " << temp[i].ID << endl;
+    if(full[temp[i].ID] + empty[temp[i].ID] + 1 > temp[i].capacity || brain[temp[i].src].fed == 0)
       return 0;
   }
   return 1;
