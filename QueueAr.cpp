@@ -48,8 +48,8 @@
         template <class Object>
         const Object & Queue<Object>::getFront( ) const
         {
-            if( isEmpty( ) )
-                throw Underflow( );
+            //if( isEmpty( ) )
+              //  throw Underflow( );
             return theArray[ front ];
         }
 
@@ -60,8 +60,8 @@
         template <class Object>
         Object Queue<Object>::dequeue( )
         {
-            if( isEmpty( ) )
-                throw Underflow( );
+            //if( isEmpty( ) )
+              //  throw Underflow( );
 
             currentSize--;
             Object frontItem = theArray[ front ];
@@ -76,8 +76,8 @@
         template <class Object>
         void Queue<Object>::enqueue( const Object & x )
         {
-            if( isFull( ) )
-                throw Overflow( );
+            //if( isFull( ) )
+              //  throw Overflow( );
             increment( back );
             theArray[ back ] = x;
             currentSize++;
