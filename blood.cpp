@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(cellCount)
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) //: vec(cellCount)
 {
   debug = 0;
   pathsCreated = 0;
@@ -24,22 +24,22 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
     temp[i] = new Vessel2[vesselCount];
 
   //creating count for each brain cell
-  count = new int[cellCount];
+  vec = new int[cellCount];
   for(int i = 0; i < cellCount; i++)
-    count[i] = 0;
+    vec[i] = 0;
   //creating adjacency list for each brain cell
   for(int i = 0; i < vesselCount; i++)
   {
     int pos = vessels[i].src;
     //cout << pos << endl;
-    temp[pos][count[pos]++] = vessel[i];
+    temp[pos][vec[pos]++] = vessel[i];
   }
 
 
   brain = new BrainCell[cellCount];
   for(int i = 0; i < cellCount; i++)
   {
-    brain[i].create(temp[i], count[i], i);
+    brain[i].create(temp[i], vec[i], i);
   }
 
   if(debug)
@@ -61,7 +61,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
   this->vesselCount = vesselCount;
   this->depth = depth;
 
-  delete count;
+  //delete count;
   for(int i = 0; i < cellCount; i++)
     delete temp[i];
   delete temp;

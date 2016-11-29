@@ -13,7 +13,7 @@ public:
   int calcFlows(int fullFlows[], int emptyFlows[]);
   Vessel2** temp;
   BrainCell* brain;
-  int* count;
+  int* vec;
   int cellCount;
   int vesselCount;
   int depth;
@@ -21,7 +21,7 @@ public:
   int pathsCreated;
   int totalFed;
   Vessel2* vessel;
-  vector<int> vec;
+  //vector<int> vec;
   int generatePath2(BrainCell &cell, Vessel2* p, int &length, int end);
   void generatePath3(BrainCell &cell, BrainCell* p, int &length, int end);
   void generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, int start);
