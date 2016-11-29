@@ -32,7 +32,6 @@
             Object dequeue( );
             void enqueue( const Object & x );
 
-          private:
             //vector<Object> theArray;
             Object* theArray;
             int            currentSize;
