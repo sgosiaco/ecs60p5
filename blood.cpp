@@ -8,11 +8,7 @@
 
 using namespace std;
 
-<<<<<<< HEAD
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) //: vec(cellCount)
-=======
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(cellCount), queue(vesselCount + 1)
->>>>>>> 93b4992a6c507821fefb769c243b8bf52bf51d92
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queue(vesselCount + 1)
 {
   debug = 0;
   pathsCreated = 0;
@@ -65,11 +61,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
   this->vesselCount = vesselCount;
   this->depth = depth;
 
-<<<<<<< HEAD
   //delete count;
-=======
-  delete [] count;
->>>>>>> 93b4992a6c507821fefb769c243b8bf52bf51d92
   for(int i = 0; i < cellCount; i++)
     delete [] temp[i];
   delete [] temp;
