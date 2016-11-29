@@ -152,7 +152,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     if(brain[i].fed == 0)
     {
 
-      for(int k = brain[i].inLength - 1; k >= 0; k--)
+      for(int k = brain[i].inLength - 2 - brain[i].source; k >= 0; k--)
       {
         //cout << brain[i].inPath[k].src << ' ' << brain[i].inPath[k].dest << endl;
         int index = brain[i].inPath[k].src;
@@ -172,6 +172,8 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
 
         }
+        else
+          (brain[i].source)++;
       }
 
       if(checkCapacityIn(brain[i].inPath, brain[i].inLength, fullFlows, emptyFlows) && checkCapacity(brain[i].outPath, brain[i].outLength, fullFlows, emptyFlows) && !dontFeed)
