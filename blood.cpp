@@ -186,7 +186,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
     }
   }
 
-  if(brain[cellCount - 1].fed == 0 && totalFed == cellCount - 1)
+  if(totalFed == cellCount - 1 && brain[cellCount - 1].fed == 0)
   {
     if(checkCapacity(brain[0].outPath, brain[0].outLength, fullFlows, emptyFlows))
     {
