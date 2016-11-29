@@ -5,6 +5,7 @@
 #include "bloodRunner.h"
 #include "braincell.h"
 #include "vector.h"
+#include "QueueAr.h"
 
 class Blood
 {
@@ -22,6 +23,7 @@ public:
   int totalFed;
   Vessel2* vessel;
   vector<int> vec;
+  Queue<BrainCell*> queue;
   int generatePath2(BrainCell &cell, Vessel2* p, int &length, int end);
   void generatePath3(BrainCell &cell, BrainCell* p, int &length, int end);
   void generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, int start);

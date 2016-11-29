@@ -8,11 +8,12 @@
 
 using namespace std;
 
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(cellCount)
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(cellCount), queue(vesselCount + 1)
 {
   debug = 0;
   pathsCreated = 0;
   totalFed = 0;
+
   //copying vessels
   vessel = new Vessel2[vesselCount];
   for(int i = 0; i < vesselCount; i++)
@@ -34,7 +35,6 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
     //cout << pos << endl;
     temp[pos][count[pos]++] = vessel[i];
   }
-
 
   brain = new BrainCell[cellCount];
   for(int i = 0; i < cellCount; i++)
@@ -183,6 +183,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
         brain[i].fed = 1;
         totalFed++;
       }
+
     }
   }
 
@@ -314,7 +315,7 @@ void Blood::generatePath4(BrainCell &cell, BrainCell* p, int &length, int end, i
 
 void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 {
-  Queue <BrainCell*> queue(vesselCount + 1);
+  //Queue <BrainCell*> queue(vesselCount + 1);
   for(int i = 0; i < cellCount; i++)
     vec[i] = -1;
   queue.enqueue(&cell);
@@ -334,6 +335,9 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
         }
         temp = &(brain[vec[temp->ID]]);
       } while(temp->ID != cell.ID);
+
+      while(!queue.isEmpty())
+        queue.dequeue();
 
       return;
     }
