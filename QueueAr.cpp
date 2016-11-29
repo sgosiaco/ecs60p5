@@ -68,9 +68,11 @@
               //  throw Underflow( );
 
             currentSize--;
+            //int temp = front;
             Object frontItem = theArray[ front ];
             increment( front );
             return frontItem;
+            //return theArray[temp];
         }
 
         /**
