@@ -19,6 +19,7 @@ class BrainCell
 public:
   BrainCell();
   void create(Vessel2 in[], int count, int ID);
+  void create(int count, int ID);
   void updateInPath(BrainCell *p, int length);
   void updateOutPath(BrainCell *p, int length);
   int outgoing;

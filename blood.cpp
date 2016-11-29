@@ -18,6 +18,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
   for(int i = 0; i < vesselCount; i++)
     vessel[i].copy(vessels[i], i);
 
+  /*
   //creating 2d array of Vessels
   temp = new Vessel2*[cellCount];
   for(int i = 0; i < cellCount; i++)
@@ -35,12 +36,26 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
     temp[pos][count[pos]++] = vessel[i];
   }
 
-
   brain = new BrainCell[cellCount];
   for(int i = 0; i < cellCount; i++)
   {
     brain[i].create(temp[i], count[i], i);
   }
+  */
+
+  brain = new BrainCell[cellCount];
+  for(int i = 0; i < cellCount; i++)
+  {
+    brain[i].create(cellCount, i);
+  }
+
+  for(int k = 0; k < vesselCount; k++)
+  {
+    int pos = vessels[k].src;
+    //cout << pos << endl;
+    brain[pos].out[(brain[pos].outgoing)++] = vessel[k];
+  }
+
 
   if(debug)
   {
@@ -61,10 +76,13 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : vec(
   this->vesselCount = vesselCount;
   this->depth = depth;
 
+
+  /*
   delete count;
   for(int i = 0; i < cellCount; i++)
     delete temp[i];
   delete temp;
+  */
   delete vessel;
 } // Blood()
 
