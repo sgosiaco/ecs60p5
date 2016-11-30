@@ -5,6 +5,7 @@
 #include "bloodRunner.h"
 #include "braincell.h"
 #include "QueueAr.h"
+#include "StackAr.h"
 
 class Blood
 {
@@ -23,6 +24,7 @@ public:
   Vessel2* vessel;
   //vector<int> vec;
   Queue<BrainCell*> queue;
+  StackAr<BrainCell*> stack;
   void generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end);
   void generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int end);
   int checkCapacity(Vessel2 *temp, int length, int full[], int empty[]);

@@ -81,7 +81,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       brain[i].inPath = new Vessel2[depth];
       brain[i].outPath = new Vessel2[depth];
       generatePathQueue(brain[0], brain[i].inPath, brain[i].inLength, i);
-      generatePathQueue(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
+      generatePathQueueOut(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
 
       /*
       if(debug)
@@ -96,7 +96,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       */
     }
     brain[0].outPath = new Vessel2[depth];
-    generatePathQueue(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    generatePathQueueOut(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
     pathsCreated = 1;
 
     for(int k = 0; k < brain[0].outLength; k++)
@@ -249,11 +249,11 @@ void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int e
   //Queue <BrainCell*> queue(vesselCount + 1);
   for(int i = 0; i < cellCount; i++)
     vec[i] = -1;
-  queue.enqueue(&cell);
+  stack.push(&cell);
   vec[cell.ID] = cell.ID;
   while(true)
   {
-    BrainCell *temp = queue.dequeue();
+    BrainCell *temp = stack.topAndPop();
     if(temp->ID == end)
     {
 
@@ -269,7 +269,7 @@ void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int e
 
       //while(!queue.isEmpty())
         //queue.dequeue();
-      queue.makeEmpty();
+      stack.makeEmpty();
 
       return;
     }
@@ -278,7 +278,7 @@ void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int e
       if(vec[temp->out[i].dest] == -1)
       {
         vec[temp->out[i].dest] = temp->ID;
-        queue.enqueue(&(brain[temp->out[i].dest]));
+        stack.push(&(brain[temp->out[i].dest]));
       }
     }
   }
