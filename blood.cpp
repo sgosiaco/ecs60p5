@@ -244,6 +244,46 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
   }
 }
 
+void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int end)
+{
+  //Queue <BrainCell*> queue(vesselCount + 1);
+  for(int i = 0; i < cellCount; i++)
+    vec[i] = -1;
+  queue.enqueue(&cell);
+  vec[cell.ID] = cell.ID;
+  while(true)
+  {
+    BrainCell *temp = queue.dequeue();
+    if(temp->ID == end)
+    {
+
+      do {
+        //cout << "source is" << vec[temp->ID] << " end is " << temp->ID << endl;
+        for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
+        {
+          if(brain[vec[temp->ID]].out[i].dest == temp->ID)
+            p[length++] = brain[vec[temp->ID]].out[i];
+        }
+        temp = &(brain[vec[temp->ID]]);
+      } while(temp->ID != cell.ID);
+
+      //while(!queue.isEmpty())
+        //queue.dequeue();
+      queue.makeEmpty();
+
+      return;
+    }
+    for(int i = 0; i < temp->outgoing; i++)
+    {
+      if(vec[temp->out[i].dest] == -1)
+      {
+        vec[temp->out[i].dest] = temp->ID;
+        queue.enqueue(&(brain[temp->out[i].dest]));
+      }
+    }
+  }
+}
+
 int Blood::checkCapacity(Vessel2* temp, int length, int full[], int empty[])
 {
   for(int i = length - 1; i >= 0; i--)
