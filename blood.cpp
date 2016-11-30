@@ -158,7 +158,10 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
         for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
         {
           if(brain[vec[temp->ID]].out[i].dest == temp->ID)
+          {
             p[length++] = brain[vec[temp->ID]].out[i];
+            break;
+          }
         }
         temp = &(brain[vec[temp->ID]]);
       } while(temp->ID != cell.ID);
