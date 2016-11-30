@@ -81,7 +81,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       brain[i].inPath = new Vessel2[depth];
       brain[i].outPath = new Vessel2[depth];
       generatePathQueue(brain[0], brain[i].inPath, brain[i].inLength, i);
-      generatePathQueueOut(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
+      generatePathQueue(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
 
       /*
       if(debug)
@@ -96,7 +96,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       */
     }
     brain[0].outPath = new Vessel2[depth];
-    generatePathQueueOut(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    generatePathQueue(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
     pathsCreated = 1;
 
     for(int k = 0; k < brain[0].outLength; k++)
