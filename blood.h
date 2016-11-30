@@ -27,6 +27,7 @@ public:
   StackAr<BrainCell*> stack;
   void generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end);
   void generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int end);
+  void generatePathStackOut(BrainCell &cell, Vessel2* p, int &length, int end);
   int checkCapacity(Vessel2 *temp, int length, int full[], int empty[]);
   int checkCapacityIn(Vessel2 *temp, int length, int full[], int empty[]);
   void printPath(Vessel2 *temp, int length);

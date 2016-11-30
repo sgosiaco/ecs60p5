@@ -81,8 +81,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       brain[i].inPath = new Vessel2[depth];
       brain[i].outPath = new Vessel2[depth];
       generatePathQueue(brain[0], brain[i].inPath, brain[i].inLength, i);
-      generatePathQueue(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
-
+      generatePathQueueOut(brain[i], brain[i].outPath, brain[i].outLength, cellCount - 1);
       /*
       if(debug)
       {
@@ -96,7 +95,7 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
       */
     }
     brain[0].outPath = new Vessel2[depth];
-    generatePathQueue(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
+    generatePathQueueOut(brain[0], brain[0].outPath, brain[0].outLength, cellCount - 1);
     pathsCreated = 1;
 
     for(int k = 0; k < brain[0].outLength; k++)
@@ -245,6 +244,50 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 }
 
 void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int end)
+{
+  //Queue <BrainCell*> queue(vesselCount + 1);
+  for(int i = 0; i < cellCount; i++)
+    vec[i] = -1;
+  queue.enqueue(&cell);
+  vec[cell.ID] = cell.ID;
+  while(true)
+  {
+    BrainCell *temp = queue.dequeue();
+    if(temp->ID == end || temp->outLength != 0)
+    {
+      if(temp->outLength != 0)
+      {
+        for(int i = 0; i < temp->outLength; i++)
+          p[length++] = temp->outPath[i];
+      }
+      do {
+        //cout << "source is" << vec[temp->ID] << " end is " << temp->ID << endl;
+        for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
+        {
+          if(brain[vec[temp->ID]].out[i].dest == temp->ID)
+            p[length++] = brain[vec[temp->ID]].out[i];
+        }
+        temp = &(brain[vec[temp->ID]]);
+      } while(temp->ID != cell.ID);
+
+      //while(!queue.isEmpty())
+        //queue.dequeue();
+      queue.makeEmpty();
+
+      return;
+    }
+    for(int i = 0; i < temp->outgoing; i++)
+    {
+      if(vec[temp->out[i].dest] == -1)
+      {
+        vec[temp->out[i].dest] = temp->ID;
+        queue.enqueue(&(brain[temp->out[i].dest]));
+      }
+    }
+  }
+}
+
+void Blood::generatePathStackOut(BrainCell &cell, Vessel2* p, int &length, int end)
 {
   //Queue <BrainCell*> queue(vesselCount + 1);
   for(int i = 0; i < cellCount; i++)
