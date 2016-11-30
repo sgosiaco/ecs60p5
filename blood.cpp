@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queue(vesselCount + 1)
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queue(vesselCount + 1), stack(vesselCount + 1)
 {
   debug = 0;
   pathsCreated = 0;
