@@ -27,8 +27,9 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queu
 
   //creating count for each brain cell
   vec = new int[cellCount];
-  for(int i = 0; i < cellCount; i++)
-    vec[i] = 0;
+  //for(int i = 0; i < cellCount; i++)
+    //vec[i] = 0;
+  memset(vec, 0, sizeof(int)*cellCount);
 
   //creating adjacency list for each brain cell
   for(int i = 0; i < vesselCount; i++)
@@ -55,9 +56,10 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queu
 int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 {
   //Clearing fullFlows and emptyFlows
-  for(int i = 0; i < vesselCount; i++)
-    fullFlows[i] = emptyFlows[i] = 0;
-
+  //for(int i = 0; i < vesselCount; i++)
+    //fullFlows[i] = emptyFlows[i] = 0;
+  memset(fullFlows, 0, sizeof(int)*vesselCount);
+  memset(emptyFlows, 0, sizeof(int)*vesselCount);
 
   if(!pathsCreated) //Check if paths have been created
   {
@@ -144,8 +146,9 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
 
 void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
 {
-  for(int i = 0; i < cellCount; i++)
-    vec[i] = -1;
+  //for(int i = 0; i < cellCount; i++)
+    //vec[i] = -1;
+  memset(vec, -1, sizeof(int)*cellCount);
   queue.enqueue(&cell);
   vec[cell.ID] = cell.ID;
   while(true)
