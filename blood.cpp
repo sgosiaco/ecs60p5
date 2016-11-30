@@ -343,7 +343,7 @@ int Blood::checkCapacityIn(Vessel2* temp, int length, int full[], int empty[])
   for(int i = length - 1; i >= 0; i--)
   {
     //cout << "ID " << temp[i].ID << endl;
-    if(full[temp[i].ID] + empty[temp[i].ID] + 1 > temp[i].capacity || brain[temp[i].src].fed == 0)
+    if(brain[temp[i].src].fed == 0 || full[temp[i].ID] + empty[temp[i].ID] + 1 > temp[i].capacity)
       return 0;
   }
   return 1;
