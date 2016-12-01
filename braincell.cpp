@@ -16,7 +16,7 @@ BrainCell::BrainCell()
 }
 
 
-void BrainCell::create(Vessel2 in[], int count, int ID)
+void BrainCell::create(int in[], int count, int ID)
 {
   fed = 0;
   visited = 0;
@@ -25,8 +25,8 @@ void BrainCell::create(Vessel2 in[], int count, int ID)
   inPath = outPath = NULL;
   this->ID = ID;
   outgoing = count;
-  out = new Vessel2[count];
-  memcpy(out, in, sizeof(Vessel2)*count);
+  out = new int[count];
+  memcpy(out, in, sizeof(int)*count);
   /*
   for(int i = 0; i < count; i++)
   {
@@ -44,7 +44,7 @@ void Vessel2::copy(Vessel in, int count)
   carrying = 0;
 }
 
-
+/*
 void BrainCell::updateInPath(BrainCell *p, int length)
 {
   int temp = 0;
@@ -78,3 +78,4 @@ void BrainCell::updateOutPath(BrainCell *p, int length)
   }
   outLength = temp;
 }
+*/

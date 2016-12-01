@@ -12,7 +12,7 @@ class Blood
 public:
   Blood(Vessel vessels[], int vesselCount, int cellCount, int depth);
   int calcFlows(int fullFlows[], int emptyFlows[]);
-  Vessel2** temp;
+  int** temp;
   BrainCell* brain;
   int* vec;
   int cellCount;
