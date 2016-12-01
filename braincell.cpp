@@ -1,5 +1,6 @@
 #include <iostream>
 #include "braincell.h"
+#include <cstring>
 
 using namespace std;
 
@@ -25,10 +26,13 @@ void BrainCell::create(Vessel2 in[], int count, int ID)
   this->ID = ID;
   outgoing = count;
   out = new Vessel2[count];
+  memcpy(out, in, sizeof(Vessel2)*count);
+  /*
   for(int i = 0; i < count; i++)
   {
     out[i] = in[i];
   }
+  */
 }
 
 void Vessel2::copy(Vessel in, int count)
