@@ -1,8 +1,6 @@
         #ifndef _QUEUEAR_H
         #define _QUEUEAR_H
 
-        #include "dsexceptions.h"
-
         // Queue class -- array implementation
         //
         // CONSTRUCTION: with or without a capacity; default is 10

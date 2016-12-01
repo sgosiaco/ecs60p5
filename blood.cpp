@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queue(vesselCount + 1), stack(vesselCount + 1)
+Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queue(vesselCount + 1)
 {
   debug = 0;
   pathsCreated = 0;
@@ -181,82 +181,6 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
       {
         vec[temp->out[i].dest] = temp->ID;
         queue.enqueue(&(brain[temp->out[i].dest]));
-      }
-    }
-  }
-}
-
-void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int end)
-{
-  for(int i = 0; i < cellCount; i++)
-    vec[i] = -1;
-  queue.enqueue(&cell);
-  vec[cell.ID] = cell.ID;
-  while(true)
-  {
-    BrainCell *temp = queue.dequeue();
-    if(temp->ID == end || temp->outLength != 0)
-    {
-      if(temp->outLength != 0)
-      {
-        for(int i = 0; i < temp->outLength; i++)
-          p[length++] = temp->outPath[i];
-      }
-      do {
-        for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
-        {
-          if(brain[vec[temp->ID]].out[i].dest == temp->ID)
-            p[length++] = brain[vec[temp->ID]].out[i];
-        }
-        temp = &(brain[vec[temp->ID]]);
-      } while(temp->ID != cell.ID);
-
-      queue.makeEmpty();
-
-      return;
-    }
-    for(int i = 0; i < temp->outgoing; i++)
-    {
-      if(vec[temp->out[i].dest] == -1)
-      {
-        vec[temp->out[i].dest] = temp->ID;
-        queue.enqueue(&(brain[temp->out[i].dest]));
-      }
-    }
-  }
-}
-
-void Blood::generatePathStackOut(BrainCell &cell, Vessel2* p, int &length, int end)
-{
-  for(int i = 0; i < cellCount; i++)
-    vec[i] = -1;
-  stack.push(&cell);
-  vec[cell.ID] = cell.ID;
-  while(true)
-  {
-    BrainCell *temp = stack.topAndPop();
-    if(temp->ID == end)
-    {
-
-      do {
-        for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
-        {
-          if(brain[vec[temp->ID]].out[i].dest == temp->ID)
-            p[length++] = brain[vec[temp->ID]].out[i];
-        }
-        temp = &(brain[vec[temp->ID]]);
-      } while(temp->ID != cell.ID);
-
-      stack.makeEmpty();
-
-      return;
-    }
-    for(int i = 0; i < temp->outgoing; i++)
-    {
-      if(vec[temp->out[i].dest] == -1)
-      {
-        vec[temp->out[i].dest] = temp->ID;
-        stack.push(&(brain[temp->out[i].dest]));
       }
     }
   }

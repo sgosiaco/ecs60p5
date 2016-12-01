@@ -43,38 +43,3 @@ void Vessel2::copy(Vessel in, int count)
   ID = count;
   carrying = 0;
 }
-
-
-void BrainCell::updateInPath(BrainCell *p, int length)
-{
-  int temp = 0;
-  for(int i = 0; i < length - 1; i++)
-  {
-    for(int k = 0; k < p[i].outgoing; k++)
-    {
-      if(p[i].out[k].dest == p[i + 1].ID)
-      {
-        inPath[temp++] = p[i].out[k];
-        break;
-      }
-    }
-  }
-  inLength = temp;
-}
-
-void BrainCell::updateOutPath(BrainCell *p, int length)
-{
-  int temp = 0;
-  for(int i = 0; i < length - 1; i++)
-  {
-    for(int k = 0; k < p[i].outgoing; k++)
-    {
-      if(p[i].out[k].dest == p[i + 1].ID)
-      {
-        outPath[temp++] = p[i].out[k];
-        break;
-      }
-    }
-  }
-  outLength = temp;
-}
