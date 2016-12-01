@@ -21,9 +21,9 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queu
     vessel[i].copy(vessels[i], i);
 
   //creating 2d array of Vessels
-  temp = new int*[cellCount];
+  temp = new Vessel2*[cellCount];
   for(int i = 0; i < cellCount; i++)
-    temp[i] = new int[vesselCount];
+    temp[i] = new Vessel2[vesselCount];
 
   //creating count for each brain cell
   vec = new int[cellCount];
@@ -35,7 +35,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queu
   for(int i = 0; i < vesselCount; i++)
   {
     int pos = vessels[i].src;
-    temp[pos][vec[pos]++] = i;
+    temp[pos][vec[pos]++] = vessel[i];
   }
 
   //creating braincell array
@@ -49,7 +49,7 @@ Blood::Blood(Vessel vessels[], int vesselCount, int cellCount, int depth) : queu
   for(int i = 0; i < cellCount; i++)
     delete [] temp[i];
   delete [] temp;
-  //delete [] vessel;
+  delete [] vessel;
 } // Blood()
 
 
@@ -162,9 +162,9 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
       do {
         for(int i = 0; i < brain[vec[temp->ID]].outgoing; i++)
         {
-          if(vessel[brain[vec[temp->ID]].out[i]].dest == temp->ID)
+          if(brain[vec[temp->ID]].out[i].dest == temp->ID)
           {
-            p[length++] = vessel[brain[vec[temp->ID]].out[i]];
+            p[length++] = brain[vec[temp->ID]].out[i];
             break;
           }
         }
@@ -177,15 +177,15 @@ void Blood::generatePathQueue(BrainCell &cell, Vessel2* p, int &length, int end)
     }
     for(int i = 0; i < temp->outgoing; i++)
     {
-      if(vec[vessel[temp->out[i]].dest] == -1)
+      if(vec[temp->out[i].dest] == -1)
       {
-        vec[vessel[temp->out[i]].dest] = temp->ID;
-        queue.enqueue(&(brain[vessel[temp->out[i]].dest]));
+        vec[temp->out[i].dest] = temp->ID;
+        queue.enqueue(&(brain[temp->out[i].dest]));
       }
     }
   }
 }
-/*
+
 void Blood::generatePathQueueOut(BrainCell &cell, Vessel2* p, int &length, int end)
 {
   for(int i = 0; i < cellCount; i++)
@@ -261,7 +261,6 @@ void Blood::generatePathStackOut(BrainCell &cell, Vessel2* p, int &length, int e
     }
   }
 }
-*/
 
 int Blood::checkCapacity(Vessel2* temp, int length, int full[], int empty[])
 {

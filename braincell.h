@@ -18,13 +18,13 @@ class BrainCell
 {
 public:
   BrainCell();
-  void create(int in[], int count, int ID);
+  void create(Vessel2 in[], int count, int ID);
   void updateInPath(BrainCell *p, int length);
   void updateOutPath(BrainCell *p, int length);
   int outgoing;
   int fed;
   int ID;
-  int* out;
+  Vessel2* out;
   Vessel2* inPath;
   Vessel2* outPath;
   int inLength;
