@@ -110,6 +110,8 @@ int Blood::calcFlows(int fullFlows[], int emptyFlows[])
             brain[index].fed = 1;
             totalFed++;
           }
+          else
+            break;
         }
         else
           (brain[i].source)++;
